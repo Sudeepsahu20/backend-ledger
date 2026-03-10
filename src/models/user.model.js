@@ -9,7 +9,7 @@ const userSchema=new mongoose.Schema({
         match:[/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,"Invalid Email address"],
         unique:true
     },
-    name:{
+    username:{
         type:String,
         required:[true,"Name feild is required"]
     },
@@ -28,7 +28,7 @@ userSchema.pre("save", async function(next) {
     this.password = await bcrypt.hash(this.password, 10);
     next();
   } catch (error) {
-    next(error);
+    console.log(error);
   }
 });
 
