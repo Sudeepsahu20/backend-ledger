@@ -21,22 +21,21 @@ const userSchema=new mongoose.Schema({
     }
 },{timestamps:true});
 
-userSchema.pre("save", async function(next) {
+userSchema.pre("save", async function() {
   try {
-    if (!this.isModified("password")) return next();
+    if (!this.isModified("password")) return ;
 
     this.password = await bcrypt.hash(this.password, 10);
-    next();
+    return;
   } catch (error) {
     console.log(error);
   }
 });
 
 
-userSchema.method.comparePassword=function(password){
-    bcrypt.compare(password,this.password);
+userSchema.methods.comparePassword = async function(password){
+    return await bcrypt.compare(password, this.password);
 }
-
 
 const userModel=mongoose.model("user",userSchema);
 export default userModel;

@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 export async function registerController(req,res) {
     try {
           const {username,email,password}=req.body;
- console.log(req.body);
+
     if(!username || !email || !password){
         return res.status(400).json({
             message:"All fields are required"
@@ -15,17 +15,15 @@ export async function registerController(req,res) {
 
     const isExistingUser=await userModel.findOne({email});
     if(isExistingUser){
-        return res.status(400).json({
+        return res.status(422).json({
             message:"user already exist with this email"
         });
     }
 
-    const hashed=await bcrypt.hash(password,10);
-
      const user=await userModel.create({
         username,
         email,
-        password:hashed
+        password
      })
 
      const token=jwt.sign({id:user._id},process.env.SECRET_KEY,{expiresIn:'1d'});
@@ -57,14 +55,14 @@ export async function registerController(req,res) {
 export async function loginController(req,res){
     try {
          const {email,password}=req.body;
-
+        
     if(!email || !password){
        return res.status(400).json({
             message:"All fields are required"
         })
     }
 
-    const user =await userModel.findOne({email});
+    const user =await userModel.findOne({email}).select("+password");;
 
     if(!user){
        return res.status(400).json({
@@ -72,7 +70,7 @@ export async function loginController(req,res){
         })
     }
 
-    const isPasswordCorrect=await bcrypt.compare(password,user.password);
+      const isPasswordCorrect = await user.comparePassword(password);
 
     if(!isPasswordCorrect){
        return res.status(400).json({message:"Invalid credentials"});
