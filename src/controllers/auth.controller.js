@@ -1,6 +1,6 @@
 import userModel from "../models/user.model.js";
-import bcrypt from 'bcryptjs';
 import jwt from "jsonwebtoken";
+import { sendRegistrationEmail } from "../services/email.service.js";
 
 
 export async function registerController(req,res) {
@@ -32,7 +32,8 @@ export async function registerController(req,res) {
     secure:false,
     maxAge:24*60*60*1000
 });
-
+   
+await sendRegistrationEmail(user.email, user.username);
 
     return res.status(201).json({
         message:"User Registered successfully",
@@ -42,6 +43,7 @@ export async function registerController(req,res) {
             username:user.username
         }
     })
+     
 
     } catch (error) {
         console.log(error);
