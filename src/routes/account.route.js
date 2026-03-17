@@ -5,6 +5,6 @@ import authMiddleware from "../middlewares/auth.middleware.js";
  
 const router=express.Router();
 
-router.post("/create",authMiddleware,createAccountController);
+router.post("/",authMiddleware,createAccountController);
 
 export default router;

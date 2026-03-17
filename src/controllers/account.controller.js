@@ -1,29 +1,23 @@
 
 import accountModel from "../models/account.model.js";      
 
+//create a controller for account having user credentailas from authMiddleware in req.user.id and create a new account for the user and return the account details in response
 
 export async function createAccountController(req,res){
+    const user=req.user;
+
     try {
-        const {accountName,accountType,balance}=req.body;
-        if(!accountName || !accountType || !balance){
-            return res.status(400).json({
-                message:"All fields are required"
-            })
-        }
         const account=await accountModel.create({
-            accountName,
-            accountType,
-            balance,
-            userId:req.user.id
-        })  
+            user:user._id
+        });
         return res.status(201).json({
             message:"Account created successfully",
             account
         })
     } catch (error) {
+        console.log(error);
         return res.status(500).json({
-            message:"Error creating account",
-            error:error.message
+            message:"Internal server error"
         })
     }
 }

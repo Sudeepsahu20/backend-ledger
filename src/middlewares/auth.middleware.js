@@ -1,8 +1,10 @@
+import jwt  from "jsonwebtoken";
 import userModel from "../models/user.model.js";
 
 async function authMiddleware(req,res,next){    
     try {
         const token=req.cookies.token;  
+        console.log(token); // Debugging line to check if token is being received
         if(!token){
             return res.status(401).json({
                 message:"Unauthorized"
